@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Sheets</title>
+  <meta name="theme-color" content="#4f46e5">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="manifest" href="manifest.json">
+  <style>
+    :root{
+      --primary:#4f46e5;--primary-hover:#4338ca;--bg:#f8fafc;--card:rgba(255,255,255,.78);
+      --card-solid:#fff;--text:#0f172a;--muted:#64748b;--border:rgba(148,163,184,.28);
+      --danger:#ef4444;--grid:#d7dde5;--sidebar:rgba(255,255,255,.95);
+      --sidebar-border:rgba(226,232,240,.85);--toggle-off:#cbd5e1;--toggle-on:#22c55e;
+      --overlay:rgba(15,23,42,.35);--selected:rgba(79,70,229,.12);
+      --selected-border:rgba(79,70,229,.55);--shadow:0 12px 30px rgba(15,23,42,.1);
+      --hero:linear-gradient(135deg,#4f46e5,#1d4ed8 45%,#06b6d4);
+      --btn-gradient:linear-gradient(135deg,#4f46e5,#1d4ed8)
+    }
+    body.dark{
+      --primary:#818cf8;--primary-hover:#6366f1;--bg:#0b1220;--card:rgba(17,24,39,.82);
+      --card-solid:#111827;--text:#e5e7eb;--muted:#94a3b8;--border:rgba(51,65,85,.55);
+      --danger:#f87171;--grid:#334155;--sidebar:rgba(15,23,42,.96);
+      --sidebar-border:rgba(51,65,85,.8);--toggle-off:#475569;--selected:rgba(129,140,248,.18);
+      --selected-border:rgba(129,140,248,.7);--shadow:0 14px 36px rgba(0,0,0,.35);
+      --hero:linear-gradient(135deg,#0f172a,#1d4ed8 50%,#0ea5e9);
+      --btn-gradient:linear-gradient(135deg,#6366f1,#3b82f6)
+    }
+    body.theme-ocean{--primary:#0ea5e9;--primary-hover:#0284c7;--hero:linear-gradient(135deg,#0f172a,#0ea5e9 50%,#2563eb);--btn-gradient:linear-gradient(135deg,#0ea5e9,#2563eb);--selected:rgba(14,165,233,.14);--selected-border:rgba(14,165,233,.6)}
+    body.theme-sunset{--primary:#f97316;--primary-hover:#ea580c;--hero:linear-gradient(135deg,#ea580c,#f97316 50%,#ec4899);--btn-gradient:linear-gradient(135deg,#f97316,#ec4899);--selected:rgba(249,115,22,.14);--selected-border:rgba(249,115,22,.6)}
+    body.theme-forest{--primary:#22c55e;--primary-hover:#16a34a;--hero:linear-gradient(135deg,#14532d,#22c55e 50%,#14b8a6);--btn-gradient:linear-gradient(135deg,#22c55e,#14b8a6);--selected:rgba(34,197,94,.14);--selected-border:rgba(34,197,94,.6)}
+    body.theme-parrot{--primary:#00c2a8;--primary-hover:#0f9d8f;--hero:linear-gradient(135deg,#00897b,#00c2a8 50%,#00b8d9);--btn-gradient:linear-gradient(135deg,#00c2a8,#00b8d9);--selected:rgba(0,194,168,.14);--selected-border:rgba(0,194,168,.6)}
+    *{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,-apple-system,sans-serif}
+    body{background:var(--bg);color:var(--text);padding-bottom:90px;overflow-x:hidden}
+    header{background:var(--hero);color:#fff;min-height:82px;padding:8px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:110;box-shadow:0 10px 24px rgba(15,23,42,.16)}
+    .brand{display:flex;align-items:flex-start;gap:.7rem;font-weight:900;font-size:1.1rem}
+    .brand-main{display:flex;align-items:center;gap:.7rem}
+    .brand-logo{width:40px;height:40px;border-radius:14px;background:rgba(255,255,255,.16);display:grid;place-items:center;border:1px solid rgba(255,255,255,.22)}
+    .brand-logo svg{width:24px;height:24px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .brand-name{display:flex;flex-direction:column;line-height:1}
+    .brand-name strong{font-size:1.08rem;letter-spacing:.6px}
+    .brand-name span{font-size:.72rem;font-weight:600;opacity:.85;margin-top:3px}
+    .brand-content{display:flex;flex-direction:column;gap:5px}
+    .header-history{display:flex;gap:4px;padding-left:2px}
+    .history-btn{width:25px;height:21px;border:1px solid rgba(255,255,255,.3);border-radius:6px;background:rgba(255,255,255,.13);color:#fff;font-size:.85rem;line-height:1;cursor:pointer;font-weight:800;display:grid;place-items:center}
+    .history-btn:hover{background:rgba(255,255,255,.28)}
+    .history-btn:disabled{opacity:.35;cursor:not-allowed}
+    .header-actions{display:flex;align-items:center;gap:.5rem}
+    .top-left-btn{background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:12px;cursor:pointer;font-weight:800;line-height:1;padding:.55rem .9rem}
+    .theme-toggle{width:42px;height:38px;padding:0;display:grid;place-items:center;font-size:1.1rem;background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:13px;cursor:pointer;box-shadow:inset 0 1px 1px rgba(255,255,255,.18),0 4px 12px rgba(0,0,0,.12);transition:.2s}
+    .theme-toggle:hover{background:rgba(255,255,255,.25);transform:translateY(-1px)}
+    .theme-toggle:active{transform:scale(.94)}
+    .navigation-strip{display:none}
+    .container{max-width:1100px;margin:1.5rem auto;padding:0 .75rem}.hidden{display:none!important}.top-nav{display:flex;gap:.75rem;margin-bottom:1rem;flex-wrap:wrap}.nav-btn{background:var(--card);border:1px solid var(--border);color:var(--text);padding:.75rem 1rem;border-radius:12px;cursor:pointer;font-weight:800;box-shadow:var(--shadow)}.nav-btn.active{background:var(--btn-gradient);color:#fff;border-color:transparent}.nav-icon{margin-right:.45rem}
+    .sidebar-overlay{position:fixed;inset:0;background:var(--overlay);opacity:0;pointer-events:none;transition:.2s;z-index:120}.sidebar-overlay.show{opacity:1;pointer-events:auto}.sidebar{position:fixed;top:0;left:0;height:100vh;width:50vw;max-width:420px;min-width:260px;background:var(--sidebar);border-right:1px solid var(--sidebar-border);padding:1rem;box-shadow:2px 0 20px rgba(15,23,42,.22);transform:translateX(-100%);transition:.25s;z-index:130;overflow-y:auto}.sidebar.open{transform:translateX(0)}.sidebar h3{margin-bottom:.8rem}
+    .btn{padding:.6rem .95rem;border-radius:12px;border:none;font-weight:700;cursor:pointer}.btn-primary{background:var(--btn-gradient);color:#fff}.btn-danger{background:var(--danger);color:#fff}.btn-secondary{background:rgba(148,163,184,.16);color:var(--text)}.btn-sm{padding:.3rem .55rem;font-size:.8rem;border-radius:10px}.btn-fab-right,.btn-fab-left{position:fixed;bottom:20px;border-radius:999px;padding:.95rem 1.25rem;z-index:100;box-shadow:0 14px 32px rgba(0,0,0,.18)}.btn-fab-right{right:20px}.btn-fab-left{left:20px}
+    .sheet-card,.item-form,.items-list,.settings-panel,.margins-panel{background:var(--card);border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow)}.sheet-card{padding:1rem 1.1rem;display:flex;justify-content:space-between;align-items:center;cursor:pointer;margin-top:1rem;gap:.8rem}.sheet-info h3{font-size:1.05rem}.sheet-info p{color:var(--muted);font-size:.85rem;margin-top:4px}.card-actions{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}
+    .form-row{display:grid;grid-template-columns:70% 30%;gap:.8rem;margin-bottom:.9rem}.form-group{margin-bottom:.5rem;min-width:0}label{display:block;font-weight:700;margin-bottom:.3rem;font-size:.9rem;color:var(--muted)}input,textarea{width:100%;padding:.7rem .8rem;border:1px solid var(--border);border-radius:14px;font-size:.95rem;background:var(--card-solid);outline:none;color:var(--text);min-width:0}input[readonly],textarea[readonly]{cursor:default}
+    .sheet-wrapper{background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;box-shadow:var(--shadow)}.table-responsive{overflow-x:auto;margin:.8rem 0}table{width:100%;border-collapse:collapse;table-layout:fixed}th,td{border:1px solid var(--grid);padding:0;height:38px;vertical-align:middle;overflow:hidden}th{background:rgba(79,70,229,.12);font-size:.72rem;color:var(--text);text-align:center;font-weight:800;padding:0 2px}td .cell-input{width:100%;height:38px;border:none;padding:.35rem .45rem;font-size:.84rem;background:transparent}td.num{text-align:center;font-weight:700;color:var(--muted);background:rgba(148,163,184,.08);font-size:.8rem}td.action-cell{text-align:center;padding:0 1px}.total-box{background:var(--card);padding:.95rem 1rem;border-radius:16px;text-align:right;font-size:1.05rem;font-weight:800;margin:1rem 0;border:1px solid var(--border);box-shadow:var(--shadow)}.action-bar{display:flex;gap:.8rem;justify-content:flex-end;margin-top:1rem;flex-wrap:wrap}
+    .settings-panel{display:none;margin-top:.8rem;padding:.8rem}.settings-panel.show{display:block}.theme-panel{margin-top:.7rem;padding-top:.7rem;border-top:1px dashed var(--border)}.theme-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.6rem;margin-top:.7rem}.theme-option,.toggle-btn{border:1px solid var(--border);border-radius:14px;padding:.8rem;background:var(--card-solid);cursor:pointer;color:var(--text);font-weight:700}.toggle-btn{width:100%;display:flex;justify-content:space-between;align-items:center}.theme-option.active{outline:2px solid var(--primary)}.toggle-track{width:54px;height:28px;border-radius:999px;background:var(--toggle-off);position:relative}.toggle-track.on{background:var(--toggle-on)}.toggle-thumb{width:22px;height:22px;border-radius:50%;background:#fff;position:absolute;top:3px;left:3px}.toggle-track.on .toggle-thumb{left:29px}.page{display:none}.page.active{display:block}.item-form,.items-list{padding:1rem;margin-top:1rem}.item-list-card{border:1px solid var(--border);border-radius:16px;padding:.9rem;margin-top:.8rem;background:var(--card);cursor:pointer}.item-list-card.selected{background:var(--selected);border-color:var(--selected-border)}.image-preview{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.5rem}.image-preview img{width:70px;height:70px;object-fit:cover;border-radius:12px}.selection-banner{display:none;margin-top:1rem;padding:.8rem 1rem;background:var(--selected);border:1px solid var(--primary);border-radius:14px;justify-content:space-between;align-items:center}.selection-banner.show{display:flex}
+    @media(max-width:640px){header{padding:7px 10px}.brand{gap:.45rem}.brand-logo{width:36px;height:36px;border-radius:12px}.brand-logo svg{width:21px;height:21px}.brand-name strong{font-size:.98rem}.brand-name span{font-size:.65rem}.history-btn{width:23px;height:20px}.container{padding:0 .45rem;margin:1rem auto}.form-row{grid-template-columns:1fr;gap:.5rem}input,textarea{font-size:.85rem;padding:.45rem}th,td,td .cell-input{height:32px}th{font-size:.65rem}td .cell-input{font-size:.76rem;padding:.28rem .35rem}.sheet-card{align-items:flex-start;flex-direction:column}}
+  </style>
+</head>
+<body class="theme-default">
+<header>
+  <div class="brand">
+    <div class="brand-content">
+      <div class="brand-main">
+        <div class="brand-logo"><svg viewBox="0 0 24 24"><path d="M6 3h9l3 3v15H6z"></path><path d="M15 3v4h4"></path><path d="M8 10h8"></path><path d="M8 14h5"></path><path d="M8 18h6"></path></svg></div>
+        <div class="brand-name"><strong>Order Sheets</strong><span>Stylish sheet manager</span></div>
+      </div>
+      <div class="header-history" aria-label="Page navigation">
+        <button id="back-nav-btn" class="history-btn" onclick="navigateHistory(-1)" aria-label="Go back" title="Go back">←</button>
+        <button id="forward-nav-btn" class="history-btn" onclick="navigateHistory(1)" aria-label="Go forward" title="Go forward">→</button>
+      </div>
+    </div>
+  </div>
+  <div class="header-actions">
+    <button id="theme-toggle" class="theme-toggle" onclick="toggleDarkMode()" aria-label="Toggle dark mode" title="Toggle dark mode">☀</button>
+    <button class="top-left-btn" onclick="toggleSidebar()" aria-label="Open menu">☰</button>
+  </div>
+</header>
+
+<div id="sidebar-overlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
+<div id="sidebar" class="sidebar hidden">
+  <h3>Menu</h3>
+  <button class="btn btn-primary" onclick="toggleSettings()">Settings</button>
+  <div id="settings-panel" class="settings-panel">
+    <div class="theme-panel">
+      <button class="toggle-btn" onclick="toggleThemePanel()"><span>Themes</span><span>▾</span></button>
+      <div id="theme-panel-content" class="hidden"><div class="theme-grid">
+        <button class="theme-option" onclick="setTheme('default')">Default</button>
+        <button class="theme-option" onclick="setTheme('ocean')">Ocean</button>
+        <button class="theme-option" onclick="setTheme('sunset')">Sunset</button>
+        <button class="theme-option" onclick="setTheme('forest')">Forest</button>
+        <button class="theme-option" onclick="setTheme('parrot')">Parrot</button>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="top-nav">
+    <button id="home-nav" class="nav-btn active" onclick="showPage('home')"><span class="nav-icon">⌂</span>Home</button>
+    <button id="items-nav" class="nav-btn" onclick="showPage('items')"><span class="nav-icon">▣</span>Items</button>
+    <button id="margins-nav" class="nav-btn" onclick="showPage('margins')"><span class="nav-icon">▤</span>Margins</button>
+  </div>
+
+  <div id="home-page" class="page active">
+    <div id="sheet-list"></div>
+    <button class="btn btn-primary btn-fab-right" onclick="createNewSheet()">+ New Sheet</button>
+  </div>
+
+  <div id="items-page" class="page">
+    <h2>Items</h2>
+    <div id="selection-banner" class="selection-banner">
+      <strong>Select items</strong>
+      <button class="btn btn-primary" onclick="pasteSelectedItems()">Done</button>
+    </div>
+    <button class="btn btn-primary" style="margin-top:1rem" onclick="addItemForm()">+ New</button>
+    <div id="items-form-area"></div>
+    <div id="items-list" class="items-list"></div>
+  </div>
+
+  <div id="margins-page" class="page">
+    <h2>Margins</h2>
+    <div id="margins-list"></div>
+    <button class="btn btn-primary btn-fab-right" onclick="createNewMarginSheet()">+ New</button>
+  </div>
+
+  <div id="editor-view" class="hidden">
+    <div class="form-row">
+      <div class="form-group"><label>Sheet Name</label><input id="sheet-name" placeholder="e.g., Weekly Inventory"></div>
+      <div class="form-group"><label>Date</label><input type="date" id="sheet-date"></div>
+    </div>
+    <div class="sheet-wrapper"><div class="table-responsive"><table>
+      <colgroup><col style="width:10%"><col style="width:45%"><col style="width:20%"><col style="width:15%"><col style="width:10%"></colgroup>
+      <thead><tr><th>No.</th><th>Product</th><th>Price (PKR)</th><th>Qty</th><th>Action</th></tr></thead>
+      <tbody id="products-tbody"></tbody>
+    </table></div></div>
+    <div class="total-box">Total Cost: PKR <span id="grand-total">0.00</span></div>
+    <div id="sheet-action-bar" class="action-bar">
+      <button class="btn btn-secondary" onclick="showPage('home')">Cancel</button>
+      <button id="download-sheet-btn" class="btn btn-primary hidden" onclick="downloadSheetImage('order')">⬇ Download</button>
+      <button class="btn btn-primary save-sheet-btn" onclick="saveCurrentSheet()">Save Sheet</button>
+    </div>
+    <button id="sheet-select-btn" class="btn btn-primary btn-fab-left" onclick="toggleItemSelectMode()">Select Items</button>
+    <button id="sheet-done-btn" class="btn btn-primary btn-fab-right hidden" onclick="pasteSelectedItems()">Done</button>
+  </div>
+
+  <div id="margin-editor-view" class="hidden">
+    <div class="form-row">
+      <div class="form-group"><label>Sheet Name</label><input id="margin-sheet-name" placeholder="e.g., Weekly Margins"></div>
+      <div class="form-group"><label>Date</label><input type="date" id="margin-sheet-date"></div>
+    </div>
+    <div class="sheet-wrapper"><div class="table-responsive"><table>
+      <colgroup><col style="width:8%"><col style="width:40%"><col style="width:16%"><col style="width:16%"><col style="width:12%"><col style="width:8%"></colgroup>
+      <thead><tr><th>No.</th><th>Product</th><th>Sell Price/Qty</th><th>Buy Price/Qty</th><th>Qty</th><th>Action</th></tr></thead>
+      <tbody id="margin-products-tbody"></tbody>
+    </table></div></div>
+    <div class="total-box">Total Profit: PKR <span id="margin-grand-total">0.00</span></div>
+    <div id="margin-action-bar" class="action-bar">
+      <button class="btn btn-secondary" onclick="showPage('margins')">Cancel</button>
+      <button id="download-margin-btn" class="btn btn-primary hidden" onclick="downloadSheetImage('margin')">⬇ Download</button>
+      <button class="btn btn-primary save-margin-btn" onclick="saveCurrentMarginSheet()">Save Sheet</button>
+    </div>
+    <button class="btn btn-primary btn-fab-left" onclick="toggleMarginItemSelectMode()">Select Items</button>
+  </div>
+</div>
+
+<script>
+let items=JSON.parse(localStorage.getItem('items_data')||'[]'),
+sheets=JSON.parse(localStorage.getItem('order_sheets')||'[]'),
+marginSheets=JSON.parse(localStorage.getItem('margin_sheets')||'[]'),
+currentSheetId=null,currentMarginSheetId=null,sidebarOpen=false,selectMode=false,
+selectedItems=new Set(),marginSelectMode=false,marginSelectedItems=new Set(),viewOnly=false;
+
+const themes=['default','ocean','sunset','forest','parrot'];
+let navigationHistory=[],navigationIndex=-1,navigationBusy=false;
+
+document.addEventListener('DOMContentLoaded',()=>{
+  applyTheme(localStorage.getItem('app_theme')||'default');
+  if(localStorage.getItem('dark_mode')==='true')document.body.classList.add('dark');
+  updateThemeIcon();
+  showPage('home');
+});
+
+document.addEventListener('keydown',e=>{
+  if(e.key!=='Enter'||e.shiftKey||e.ctrlKey||e.altKey)return;
+  const current=e.target;
+  if(!['INPUT','TEXTAREA'].includes(current.tagName)||current.type==='file')return;
+  const scope=current.closest('.item-form')||current.closest('#editor-view')||current.closest('#margin-editor-view');
+  if(!scope||viewOnly)return;
+  e.preventDefault();
+  const fields=[...scope.querySelectorAll('input,textarea,select')].filter(x=>!x.disabled&&!x.readOnly&&x.type!=='file'&&x.offsetParent!==null);
+  const index=fields.indexOf(current);
+  if(index<fields.length-1){fields[index+1].focus();fields[index+1].select?.();}
+});
+
+function currentNavigationState(){
+  if(!document.getElementById('editor-view').classList.contains('hidden'))
+    return {type:'order',id:currentSheetId,readOnly:viewOnly};
+  if(!document.getElementById('margin-editor-view').classList.contains('hidden'))
+    return {type:'margin',id:currentMarginSheetId,readOnly:viewOnly};
+  return {type:'page',page:['home','items','margins'].find(x=>document.getElementById(x+'-page').classList.contains('active'))||'home'};
+}
+function recordNavigation(state){
+  if(navigationBusy)return;
+  const last=navigationHistory[navigationIndex];
+  if(JSON.stringify(last)===JSON.stringify(state))return;
+  navigationHistory=navigationHistory.slice(0,navigationIndex+1);
+  navigationHistory.push(state);navigationIndex++;
+  updateNavigationButtons();
+}
+function updateNavigationButtons(){
+  document.getElementById('back-nav-btn').disabled=navigationIndex<=0;
+  document.getElementById('forward-nav-btn').disabled=navigationIndex>=navigationHistory.length-1;
+}
+function navigateHistory(direction){
+  const target=navigationIndex+direction;
+  if(target<0||target>=navigationHistory.length)return;
+  navigationIndex=target;navigationBusy=true;restoreNavigationState(navigationHistory[target]);
+  navigationBusy=false;updateNavigationButtons();
+}
+function restoreNavigationState(state){
+  if(state.type==='order'){
+    const sheet=sheets.find(x=>x.id===state.id);
+    if(sheet){loadSheet(sheet);showEditor(state.readOnly);}
+    return;
+  }
+  if(state.type==='margin'){
+    const sheet=marginSheets.find(x=>x.id===state.id);
+    if(sheet){loadMarginSheet(sheet);showMarginEditor(state.readOnly);}
+    return;
+  }
+  showPage(state.page);
+}
+
+function toggleSidebar(){
+  sidebarOpen=!sidebarOpen;
+  document.getElementById('sidebar').classList.toggle('open',sidebarOpen);
+  document.getElementById('sidebar').classList.toggle('hidden',!sidebarOpen);
+  document.getElementById('sidebar-overlay').classList.toggle('show',sidebarOpen);
+}
+function closeSidebar(){
+  sidebarOpen=false;
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar').classList.add('hidden');
+  document.getElementById('sidebar-overlay').classList.remove('show');
+}
+function showPage(page){
+  ['home','items','margins'].forEach(x=>{
+    document.getElementById(x+'-page').classList.toggle('active',x===page);
+    document.getElementById(x+'-nav').classList.toggle('active',x===page);
+  });
+  document.getElementById('editor-view').classList.add('hidden');
+  document.getElementById('margin-editor-view').classList.add('hidden');
+  viewOnly=false;
+  renderHome();renderItems();renderMargins();closeSidebar();
+  recordNavigation({type:'page',page});
+}
+function showEditor(readOnly=false){
+  viewOnly=readOnly;
+  ['home','items','margins'].forEach(x=>document.getElementById(x+'-page').classList.remove('active'));
+  document.getElementById('editor-view').classList.remove('hidden');
+  document.getElementById('margin-editor-view').classList.add('hidden');
+  setEditorMode('editor-view',readOnly);
+  updateSelectionButtons();
+  recordNavigation({type:'order',id:currentSheetId,readOnly});
+}
+function showMarginEditor(readOnly=false){
+  viewOnly=readOnly;
+  ['home','items','margins'].forEach(x=>document.getElementById(x+'-page').classList.remove('active'));
+  document.getElementById('editor-view').classList.add('hidden');
+  document.getElementById('margin-editor-view').classList.remove('hidden');
+  setEditorMode('margin-editor-view',readOnly);
+  updateSelectionButtons();
+  recordNavigation({type:'margin',id:currentMarginSheetId,readOnly});
+}
+function setEditorMode(id,readOnly){
+  const root=document.getElementById(id);
+  root.querySelectorAll('input').forEach(input=>input.readOnly=readOnly);
+  root.querySelectorAll('.action-cell button').forEach(button=>button.classList.toggle('hidden',readOnly));
+  root.querySelectorAll('.save-sheet-btn,.save-margin-btn').forEach(button=>button.classList.toggle('hidden',readOnly));
+  root.querySelectorAll('#download-sheet-btn,#download-margin-btn').forEach(button=>button.classList.toggle('hidden',!readOnly));
+  root.querySelectorAll('.btn-fab-left').forEach(button=>button.classList.toggle('hidden',readOnly));
+}
+function applyTheme(t){
+  themes.forEach(x=>document.body.classList.remove('theme-'+x));
+  document.body.classList.add('theme-'+(themes.includes(t)?t:'default'));
+  localStorage.setItem('app_theme',t);
+}
+function setTheme(t){applyTheme(t)}
+function toggleThemePanel(){document.getElementById('theme-panel-content').classList.toggle('hidden')}
+function toggleSettings(){document.getElementById('settings-panel').classList.toggle('show')}
+function updateThemeIcon(){
+  const button=document.getElementById('theme-toggle');
+  if(!button)return;
+  const dark=document.body.classList.contains('dark');
+  button.textContent=dark?'☾':'☀';
+  button.title=dark?'Switch to light mode':'Switch to dark mode';
+  button.setAttribute('aria-label',button.title);
+}
+function toggleDarkMode(){
+  document.body.classList.toggle('dark');
+  localStorage.setItem('dark_mode',document.body.classList.contains('dark'));
+  updateThemeIcon();
+}
+function updateSelectionButtons(){
+  document.getElementById('sheet-select-btn')?.classList.toggle('hidden',viewOnly||marginSelectMode);
+  document.getElementById('sheet-done-btn')?.classList.toggle('hidden',viewOnly||!selectMode);
+  document.getElementById('selection-banner')?.classList.toggle('show',!viewOnly&&(selectMode||marginSelectMode));
+}
+function addProductRow(d={name:'',price:'',qty:''}){
+  const t=document.getElementById('products-tbody'),r=t.insertRow();
+  r.innerHTML=`<td class="num">${t.rows.length}</td><td><input class="cell-input prod-name" value="${d.name||''}"></td><td><input type="number" class="cell-input prod-price" value="${d.price||''}" oninput="calculateTotal()"></td><td><input type="number" class="cell-input prod-qty" value="${d.qty||''}" oninput="calculateTotal()"></td><td class="action-cell"><button class="btn btn-danger btn-sm" onclick="this.closest('tr').remove();calculateTotal()">×</button></td>`;
+}
+function addMarginProductRow(d={name:'',sellPrice:'',buyPrice:'',qty:''}){
+  const t=document.getElementById('margin-products-tbody'),r=t.insertRow();
+  r.innerHTML=`<td class="num">${t.rows.length}</td><td><input class="cell-input margin-name" value="${d.name||''}"></td><td><input type="number" class="cell-input margin-sell" value="${d.sellPrice||''}" oninput="calculateMarginTotal()"></td><td><input type="number" class="cell-input margin-buy" value="${d.buyPrice||''}" oninput="calculateMarginTotal()"></td><td><input type="number" class="cell-input margin-qty" value="${d.qty||''}" oninput="calculateMarginTotal()"></td><td class="action-cell"><button class="btn btn-danger btn-sm" onclick="this.closest('tr').remove();calculateMarginTotal()">×</button></td>`;
+}
+function createNewSheet(){
+  currentSheetId=Date.now().toString();viewOnly=false;
+  document.getElementById('sheet-name').value='';
+  document.getElementById('sheet-date').value=new Date().toISOString().split('T')[0];
+  document.getElementById('products-tbody').innerHTML='';
+  for(let i=0;i<10;i++)addProductRow();
+  calculateTotal();showEditor();
+}
+function createNewMarginSheet(){
+  currentMarginSheetId=Date.now().toString();viewOnly=false;
+  document.getElementById('margin-sheet-name').value='';
+  document.getElementById('margin-sheet-date').value=new Date().toISOString().split('T')[0];
+  document.getElementById('margin-products-tbody').innerHTML='';
+  for(let i=0;i<10;i++)addMarginProductRow();
+  calculateMarginTotal();showMarginEditor();
+}
+function toggleItemSelectMode(){
+  selectMode=true;marginSelectMode=false;selectedItems.clear();
+  updateSelectionButtons();renderItems();showPage('items');updateSelectionButtons();
+}
+function toggleMarginItemSelectMode(){
+  marginSelectMode=true;selectMode=false;marginSelectedItems.clear();
+  updateSelectionButtons();renderItems();showPage('items');updateSelectionButtons();
+}
+function toggleItemSelection(id){
+  if(!selectMode&&!marginSelectMode)return;
+  const set=marginSelectMode?marginSelectedItems:selectedItems;
+  set.has(id)?set.delete(id):set.add(id);renderItems();
+}
+function pasteSelectedItems(){
+  if(marginSelectMode){
+    marginSelectedItems.forEach(id=>{
+      const i=items.find(x=>x.id===id);
+      if(i)addMarginProductRow({name:i.name,sellPrice:i.price,buyPrice:i.buyPrice,qty:1});
+    });
+    marginSelectedItems.clear();marginSelectMode=false;calculateMarginTotal();showMarginEditor();return;
+  }
+  selectedItems.forEach(id=>{
+    const i=items.find(x=>x.id===id);
+    if(i)addProductRow({name:i.name,price:i.price,qty:1});
+  });
+  selectedItems.clear();selectMode=false;calculateTotal();showEditor();
+}
+function calculateTotal(){
+  let total=0;
+  document.querySelectorAll('.prod-price').forEach((x,i)=>{
+    total+=(+x.value||0)*(+document.querySelectorAll('.prod-qty')[i].value||0);
+  });
+  document.getElementById('grand-total').textContent=total.toFixed(2);
+}
+function calculateMarginTotal(){
+  let total=0;
+  document.querySelectorAll('#margin-products-tbody tr').forEach(r=>{
+    total+=((+r.querySelector('.margin-sell').value||0)-(+r.querySelector('.margin-buy').value||0))*(+r.querySelector('.margin-qty').value||0);
+  });
+  document.getElementById('margin-grand-total').textContent=total.toFixed(2);
+}
+function addItemForm(){
+  const area=document.getElementById('items-form-area'),form=document.createElement('div');
+  form.className='item-form';
+  form.innerHTML=`<div class="form-row"><div class="form-group"><label>Name</label><input class="item-name" placeholder="Item name"></div><div class="form-group"><label>Price per qty (PKR)</label><input type="number" class="item-price" placeholder="0.00"></div></div><div class="form-group"><label>Buy price/qty (PKR)</label><input type="number" class="item-buy-price" placeholder="0.00"></div><div class="form-group"><label>Images</label><input type="file" class="item-images" accept="image/*" multiple></div><div class="form-group"><label>Details</label><textarea class="item-details" rows="3"></textarea></div><div class="action-bar"><button class="btn btn-secondary" onclick="this.closest('.item-form').remove()">Cancel</button><button class="btn btn-primary" onclick="saveItem(this)">Save</button></div>`;
+  area.prepend(form);
+}
+function readImages(form){
+  return Promise.all([...form.querySelector('.item-images').files].map(file=>new Promise(resolve=>{
+    const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.readAsDataURL(file);
+  })));
+}
+function saveItem(button){
+  const form=button.closest('.item-form');
+  readImages(form).then(images=>{
+    items.unshift({id:Date.now().toString(),name:form.querySelector('.item-name').value.trim(),price:+form.querySelector('.item-price').value||0,buyPrice:+form.querySelector('.item-buy-price').value||0,details:form.querySelector('.item-details').value.trim(),images});
+    localStorage.setItem('items_data',JSON.stringify(items));form.remove();renderItems();
+  });
+}
+function renderItems(){
+  const list=document.getElementById('items-list');
+  list.innerHTML=items.length?'':'<p style="color:var(--muted)">No items added yet.</p>';
+  items.forEach((item,index)=>{
+    const card=document.createElement('div'),set=marginSelectMode?marginSelectedItems:selectedItems;
+    card.className='item-list-card'+(set.has(item.id)?' selected':'');
+    card.innerHTML=`<h3>${item.name||'Untitled Item'}</h3><p>Price: PKR ${item.price||0}</p><p>Buy price/qty: PKR ${item.buyPrice||0}</p><p>${item.details||''}</p><div class="image-preview">${(item.images||[]).map(x=>`<img src="${x}" alt="">`).join('')}</div><div class="action-bar" style="justify-content:flex-start"><button class="btn btn-primary btn-sm" onclick="event.stopPropagation();editItem(${index})">Edit</button><button class="btn btn-danger btn-sm" aria-label="Delete item" onclick="event.stopPropagation();deleteItem(${index})">×</button></div>`;
+    card.onclick=()=>selectMode||marginSelectMode?toggleItemSelection(item.id):viewItem(index);
+    list.appendChild(card);
+  });
+}
+function viewItem(index){
+  const item=items[index],area=document.getElementById('items-form-area'),form=document.createElement('div');
+  area.innerHTML='';form.className='item-form';
+  form.innerHTML=`<div class="form-row"><div class="form-group"><label>Name</label><input class="item-name" value="${item.name||''}" readonly></div><div class="form-group"><label>Price per qty (PKR)</label><input class="item-price" value="${item.price||0}" readonly></div></div><div class="form-group"><label>Buy price/qty (PKR)</label><input class="item-buy-price" value="${item.buyPrice||0}" readonly></div><div class="form-group"><label>Details</label><textarea class="item-details" rows="3" readonly>${item.details||''}</textarea></div><div class="form-group"><label>Images</label><div class="image-preview">${(item.images||[]).map(x=>`<img src="${x}" alt="">`).join('')||'<span style="color:var(--muted)">No images</span>'}</div></div><div class="action-bar"><button class="btn btn-secondary" onclick="this.closest('.item-form').remove()">Back</button></div>`;
+  area.prepend(form);
+}
+function editItem(index){
+  const item=items[index],area=document.getElementById('items-form-area'),form=document.createElement('div');
+  area.innerHTML='';form.className='item-form';
+  form.innerHTML=`<div class="form-row"><div class="form-group"><label>Name</label><input class="item-name" value="${item.name||''}"></div><div class="form-group"><label>Price per qty (PKR)</label><input type="number" class="item-price" value="${item.price||0}"></div></div><div class="form-group"><label>Buy price/qty (PKR)</label><input type="number" class="item-buy-price" value="${item.buyPrice||0}"></div><div class="form-group"><label>Images</label><input type="file" class="item-images" accept="image/*" multiple></div><div class="form-group"><label>Details</label><textarea class="item-details" rows="3">${item.details||''}</textarea></div><div class="action-bar"><button class="btn btn-secondary" onclick="this.closest('.item-form').remove()">Cancel</button><button class="btn btn-primary" onclick="updateItem(${index},this)">Update</button></div>`;
+  area.prepend(form);
+}
+function updateItem(index,button){
+  const form=button.closest('.item-form'),old=items[index];
+  readImages(form).then(images=>{
+    items[index]={...old,name:form.querySelector('.item-name').value.trim(),price:+form.querySelector('.item-price').value||0,buyPrice:+form.querySelector('.item-buy-price').value||0,details:form.querySelector('.item-details').value.trim(),images:images.length?images:old.images||[]};
+    localStorage.setItem('items_data',JSON.stringify(items));form.remove();renderItems();
+  });
+}
+function deleteItem(index){
+  if(!confirm('Delete this item?'))return;
+  items.splice(index,1);localStorage.setItem('items_data',JSON.stringify(items));renderItems();
+}
+function renderHome(){
+  const list=document.getElementById('sheet-list');
+  list.innerHTML=sheets.length?'':'<p style="color:var(--muted)">No sheets yet.</p>';
+  sheets.forEach(sheet=>{
+    const card=document.createElement('div');card.className='sheet-card';
+    card.innerHTML=`<div class="sheet-info"><h3>${sheet.name||'Untitled Sheet'}</h3><p>Date: ${sheet.date||'N/A'} | Total: PKR ${(sheet.totalCost||0).toFixed(2)}</p></div><div class="card-actions"><button class="btn btn-primary btn-sm" onclick="event.stopPropagation();editSheet('${sheet.id}')">Edit</button><button class="btn btn-danger btn-sm" aria-label="Delete sheet" onclick="event.stopPropagation();deleteSheet('${sheet.id}')">×</button></div>`;
+    card.onclick=()=>viewSheet(sheet.id);list.appendChild(card);
+  });
+}
+function renderMargins(){
+  const list=document.getElementById('margins-list');
+  list.innerHTML=marginSheets.length?'':'<p style="color:var(--muted);margin-top:1rem">No margin sheets yet.</p>';
+  marginSheets.forEach(sheet=>{
+    const card=document.createElement('div');card.className='sheet-card';
+    card.innerHTML=`<div class="sheet-info"><h3>${sheet.name||'Untitled Margin Sheet'}</h3><p>Date: ${sheet.date||'N/A'} | Total Profit: PKR ${(sheet.totalProfit||0).toFixed(2)}</p></div><div class="card-actions"><button class="btn btn-primary btn-sm" onclick="event.stopPropagation();editMarginSheet('${sheet.id}')">Edit</button><button class="btn btn-danger btn-sm" aria-label="Delete margin sheet" onclick="event.stopPropagation();deleteMarginSheet('${sheet.id}')">×</button></div>`;
+    card.onclick=()=>viewMarginSheet(sheet.id);list.appendChild(card);
+  });
+}
+function viewSheet(id){
+  const sheet=sheets.find(x=>x.id===id);if(!sheet)return;
+  loadSheet(sheet);showEditor(true);
+}
+function editSheet(id){
+  const sheet=sheets.find(x=>x.id===id);if(!sheet)return;
+  loadSheet(sheet);showEditor(false);
+}
+function loadSheet(sheet){
+  currentSheetId=sheet.id;
+  document.getElementById('sheet-name').value=sheet.name||'';
+  document.getElementById('sheet-date').value=sheet.date||'';
+  document.getElementById('products-tbody').innerHTML='';
+  (sheet.items||[]).forEach(addProductRow);
+  while(document.getElementById('products-tbody').rows.length<10)addProductRow();
+  calculateTotal();
+}
+function deleteSheet(id){
+  if(!confirm('Delete this sheet?'))return;
+  sheets=sheets.filter(x=>x.id!==id);localStorage.setItem('order_sheets',JSON.stringify(sheets));renderHome();
+}
+function viewMarginSheet(id){
+  const sheet=marginSheets.find(x=>x.id===id);if(!sheet)return;
+  loadMarginSheet(sheet);showMarginEditor(true);
+}
+function editMarginSheet(id){
+  const sheet=marginSheets.find(x=>x.id===id);if(!sheet)return;
+  loadMarginSheet(sheet);showMarginEditor(false);
+}
+function loadMarginSheet(sheet){
+  currentMarginSheetId=sheet.id;
+  document.getElementById('margin-sheet-name').value=sheet.name||'';
+  document.getElementById('margin-sheet-date').value=sheet.date||'';
+  document.getElementById('margin-products-tbody').innerHTML='';
+  (sheet.items||[]).forEach(addMarginProductRow);
+  while(document.getElementById('margin-products-tbody').rows.length<10)addMarginProductRow();
+  calculateMarginTotal();
+}
+function deleteMarginSheet(id){
+  if(!confirm('Delete this margin sheet?'))return;
+  marginSheets=marginSheets.filter(x=>x.id!==id);localStorage.setItem('margin_sheets',JSON.stringify(marginSheets));renderMargins();
+}
+
+function downloadSheetImage(type){
+  const isMargin=type==='margin';
+  const name=document.getElementById(isMargin?'margin-sheet-name':'sheet-name').value.trim()||'sheet';
+  const date=document.getElementById(isMargin?'margin-sheet-date':'sheet-date').value||'N/A';
+  const rows=[...document.querySelectorAll(isMargin?'#margin-products-tbody tr':'#products-tbody tr')];
+  const width=1100,rowHeight=48,headerHeight=150,height=headerHeight+Math.max(rows.length,1)*rowHeight+80;
+  const canvas=document.createElement('canvas');
+  canvas.width=width;canvas.height=height;
+  const ctx=canvas.getContext('2d');
+  ctx.fillStyle='#ffffff';ctx.fillRect(0,0,width,height);
+  ctx.fillStyle='#4f46e5';ctx.fillRect(0,0,width,92);
+  ctx.fillStyle='#ffffff';ctx.font='bold 30px Arial';ctx.fillText(name,35,42);
+  ctx.font='18px Arial';ctx.fillText('Date: '+date,35,72);
+  const headers=isMargin?['No.','Product','Sell Price/Qty','Buy Price/Qty','Qty']:['No.','Product','Price (PKR)','Qty'];
+  const widths=isMargin?[80,430,190,190,110]:[80,500,220,160];
+  let y=headerHeight,x=0;
+  ctx.font='bold 17px Arial';ctx.fillStyle='#e0e7ff';
+  headers.forEach((header,i)=>{ctx.fillRect(x,y,widths[i],rowHeight);ctx.fillStyle='#111827';ctx.fillText(header,x+10,y+30);ctx.strokeStyle='#9ca3af';ctx.strokeRect(x,y,widths[i],rowHeight);ctx.fillStyle='#e0e7ff';x+=widths[i];});
+  ctx.font='16px Arial';
+  rows.forEach((row,index)=>{
+    const values=isMargin?
+      [index+1,row.querySelector('.margin-name').value,row.querySelector('.margin-sell').value,row.querySelector('.margin-buy').value,row.querySelector('.margin-qty').value]:
+      [index+1,row.querySelector('.prod-name').value,row.querySelector('.prod-price').value,row.querySelector('.prod-qty').value];
+    x=0;values.forEach((value,i)=>{ctx.fillStyle='#ffffff';ctx.fillRect(x,y+rowHeight,widths[i],rowHeight);ctx.fillStyle='#111827';ctx.fillText(String(value||''),x+10,y+rowHeight+30);ctx.strokeStyle='#cbd5e1';ctx.strokeRect(x,y+rowHeight,widths[i],rowHeight);x+=widths[i];});y+=rowHeight;
+  });
+  const total=document.getElementById(isMargin?'margin-grand-total':'grand-total').textContent;
+  ctx.font='bold 20px Arial';ctx.fillStyle='#111827';ctx.fillText((isMargin?'Total Profit: PKR ':'Total Cost: PKR ')+total,35,height-25);
+  const link=document.createElement('a');
+  link.download=name.replace(/[^a-z0-9]+/gi,'-').toLowerCase()+'.png';
+  link.href=canvas.toDataURL('image/png');link.click();
+}
+
+function saveCurrentSheet(){
+  if(viewOnly)return;
+  const data={id:currentSheetId,name:document.getElementById('sheet-name').value.trim()||'Untitled Sheet',date:document.getElementById('sheet-date').value,totalCost:+document.getElementById('grand-total').textContent,items:[...document.querySelectorAll('#products-tbody tr')].map(r=>({name:r.querySelector('.prod-name').value,price:+r.querySelector('.prod-price').value||0,qty:+r.querySelector('.prod-qty').value||0}))};
+  const index=sheets.findIndex(x=>x.id===currentSheetId);index<0?sheets.push(data):sheets[index]=data;
+  localStorage.setItem('order_sheets',JSON.stringify(sheets));showPage('home');
+}
+function saveCurrentMarginSheet(){
+  if(viewOnly)return;
+  const data={id:currentMarginSheetId,name:document.getElementById('margin-sheet-name').value.trim()||'Untitled Margin Sheet',date:document.getElementById('margin-sheet-date').value,totalProfit:+document.getElementById('margin-grand-total').textContent,items:[...document.querySelectorAll('#margin-products-tbody tr')].map(r=>({name:r.querySelector('.margin-name').value,sellPrice:+r.querySelector('.margin-sell').value||0,buyPrice:+r.querySelector('.margin-buy').value||0,qty:+r.querySelector('.margin-qty').value||0}))};
+  const index=marginSheets.findIndex(x=>x.id===currentMarginSheetId);index<0?marginSheets.push(data):marginSheets[index]=data;
+  localStorage.setItem('margin_sheets',JSON.stringify(marginSheets));showPage('margins');
+}
+</script>
+<script>
+  let deferredInstallPrompt = null;
+
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./service-worker.js')
+        .then(() => console.log('Service worker registered'))
+        .catch(error => console.error('Service worker registration failed:', error));
+    });
+  }
+
+  window.addEventListener('beforeinstallprompt', event => {
+    event.preventDefault();
+    deferredInstallPrompt = event;
+
+    const installButton = document.createElement('button');
+    installButton.id = 'install-app-btn';
+    installButton.className = 'btn btn-primary';
+    installButton.textContent = 'Install App';
+    installButton.style.cssText =
+      'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:150;box-shadow:0 14px 32px rgba(0,0,0,.2)';
+
+    installButton.onclick = async () => {
+      if (!deferredInstallPrompt) return;
+
+      deferredInstallPrompt.prompt();
+      const result = await deferredInstallPrompt.userChoice;
+
+      if (result.outcome === 'accepted') {
+        installButton.remove();
+      }
+
+      deferredInstallPrompt = null;
+    };
+
+    document.body.appendChild(installButton);
+  });
+
+  window.addEventListener('appinstalled', () => {
+    document.getElementById('install-app-btn')?.remove();
+    deferredInstallPrompt = null;
+  });
+</script>
+
+</body>
+</html>
