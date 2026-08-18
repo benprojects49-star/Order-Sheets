@@ -1,17 +1,31 @@
-const CACHE_NAME = 'sheet-expert-v5';
+const CACHE_NAME = 'order-sheets-v7';
 
 const APP_SHELL = [
   './',
   './index.html',
   './manifest.json',
-  './service-worker.js'
+  './service-worker.js',
+  './icon-192.svg',
+  './icon-512.svg'
 ];
 
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(APP_SHELL))
+    caches.open(CACHE_NAME).then(async cache => {
+      await Promise.all(
+        APP_SHELL.map(async url => {
+          try {
+            const response = await fetch(url, { cache: 'no-cache' });
+            if (response.ok) {
+              await cache.put(url, response);
+            }
+          } catch (error) {
+            console.warn('Could not cache:', url);
+          }
+        })
+      );
+    }).then(() => self.skipWaiting())
   );
-  self.skipWaiting();
 });
 
 self.addEventListener('activate', event => {
@@ -39,12 +53,10 @@ self.addEventListener('fetch', event => {
         .then(response => {
           if (response.ok) {
             const responseCopy = response.clone();
-
             caches.open(CACHE_NAME).then(cache => {
               cache.put('./index.html', responseCopy);
             });
           }
-
           return response;
         })
         .catch(() => caches.match('./index.html'))
@@ -54,20 +66,17 @@ self.addEventListener('fetch', event => {
 
   event.respondWith(
     caches.match(event.request).then(cachedResponse => {
-      const networkRequest = fetch(event.request)
-        .then(response => {
-          if (response.ok) {
-            const responseCopy = response.clone();
+      if (cachedResponse) return cachedResponse;
 
-            caches.open(CACHE_NAME).then(cache => {
-              cache.put(event.request, responseCopy);
-            });
-          }
-
-          return response;
-        });
-
-      return cachedResponse || networkRequest;
-    }).catch(() => caches.match('./index.html'))
+      return fetch(event.request).then(response => {
+        if (response.ok) {
+          const responseCopy = response.clone();
+          caches.open(CACHE_NAME).then(cache => {
+            cache.put(event.request, responseCopy);
+          });
+        }
+        return response;
+      });
+    })
   );
 });

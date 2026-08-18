@@ -1,7 +1,8 @@
 {
   "id": "./",
-  "name": "Sheet Expert",
-  "short_name": "SheetExpert",
+  "name": "Order Sheets",
+  "short_name": "Order Sheets",
+  "lang": "en",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
@@ -12,16 +13,16 @@
   "prefer_related_applications": false,
   "icons": [
     {
-      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='42' fill='%234f46e5'/%3E%3Cpath d='M54 36h72l18 18v102H54z' fill='none' stroke='white' stroke-width='12'/%3E%3Cpath d='M126 36v30h30' fill='none' stroke='white' stroke-width='12'/%3E%3Cpath d='M72 90h48M72 118h30M72 146h36' fill='none' stroke='white' stroke-width='12' stroke-linecap='round'/%3E%3C/svg%3E",
+      "src": "./icon-192.svg",
       "sizes": "192x192",
       "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='%234f46e5'/%3E%3Cpath d='M148 96h192l48 48v272H148z' fill='none' stroke='white' stroke-width='28'/%3E%3Cpath d='M340 96v80h80' fill='none' stroke='white' stroke-width='28'/%3E%3Cpath d='M184 236h144M184 308h92M184 380h108' fill='none' stroke='white' stroke-width='28' stroke-linecap='round'/%3E%3C/svg%3E",
+      "src": "./icon-512.svg",
       "sizes": "512x512",
       "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "purpose": "any"
     }
   ]
 }
