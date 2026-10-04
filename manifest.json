@@ -7,8 +7,8 @@
   "scope": "./",
   "display": "standalone",
   "orientation": "any",
-  "background_color": "#f8fafc",
-  "theme_color": "#4f46e5",
+  "background_color": "#111315",
+  "theme_color": "#111315",
   "description": "A stylish sheet and item management app for mobile and desktop.",
   "prefer_related_applications": false,
   "icons": [
