@@ -625,6 +625,24 @@
       font-weight:750;font-variant-numeric:tabular-nums;padding:0 2px
     }
     @media(max-width:640px){#editor-view td.num,#margin-editor-view td.num{font-size:.68rem}}
+
+    /* Restore readable, light surfaces where the dark workspace palette was hard-coded. */
+    body:not(.dark) .brand-logo{background:linear-gradient(145deg,rgba(99,56,201,.12),rgba(37,99,235,.07));border-color:rgba(99,56,201,.22);box-shadow:none}
+    body:not(.dark) .brand-logo svg{stroke:var(--primary)}
+    body:not(.dark) .home-heading .eyebrow{color:#6338c9}
+    body:not(.dark) .stat-card:first-child strong{color:#6338c9}
+    body:not(.dark) .stat-card:last-child strong{color:#2563a8}
+    body:not(.dark) #margins-list>p{background:var(--card);color:var(--muted)!important}
+    body:not(.dark) .sidebar{background:var(--sidebar);color:var(--text)}
+    body:not(.dark) .btn-secondary{background:var(--card);color:var(--muted);border-color:var(--border)}
+    body:not(.dark) .back-button:hover{color:var(--primary);background:var(--selected)}
+    body:not(.dark) .sheet-card .btn-primary{color:var(--primary);background:transparent}
+    body:not(.dark) .sheet-card .btn-primary:hover{color:var(--primary);background:var(--selected)}
+    body:not(.dark) .enter-mode-options button:hover,
+    body:not(.dark) .enter-mode-options button[aria-pressed="true"]{
+      border-color:var(--selected-border);background:var(--selected);color:var(--text)
+    }
+    body:not(.dark) .favorite-btn.active{color:#8a5c00;border-color:rgba(138,92,0,.35);background:rgba(138,92,0,.08)}
   </style>
 </head>
 <body>
