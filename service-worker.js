@@ -1,4 +1,4 @@
-const CACHE_NAME = 'order-sheets-v10';
+const CACHE_NAME = 'order-sheets-v12';
 const APP_SHELL = [
   './',
   './index.html',
