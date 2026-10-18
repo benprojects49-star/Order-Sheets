@@ -11,6 +11,8 @@
   </defs>
   <rect width="192" height="192" rx="42" fill="url(#bg)"/>
   <circle cx="145" cy="44" r="52" fill="#7c3aed" opacity=".12"/>
-  <path d="M48 34h59l29 29v94H48z" fill="#15192a" stroke="url(#accent)" stroke-width="7" stroke-linejoin="round"/>
-  <path d="M107 36v29h28M68 84h48M68 105h48M68 126h35" fill="none" stroke="url(#accent)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <g transform="translate(96 96) scale(1.28) translate(-96 -96)">
+    <path d="M48 34h59l29 29v94H48z" fill="#15192a" stroke="url(#accent)" stroke-width="7" stroke-linejoin="round"/>
+    <path d="M107 36v29h28M68 84h48M68 105h48M68 126h35" fill="none" stroke="url(#accent)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
 </svg>

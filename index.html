@@ -646,6 +646,19 @@
     .readonly #share-sheet-btn,.readonly #share-margin-btn{display:inline-flex;align-items:center;justify-content:center;background:var(--card)!important;border:1px solid var(--border)!important;box-shadow:none!important;color:var(--primary)!important;padding:.4rem .55rem}
     .readonly #share-sheet-btn .button-icon,.readonly #share-margin-btn .button-icon{width:23px;height:23px;margin:0}
     @media(max-width:640px){.readonly #share-sheet-btn,.readonly #share-margin-btn{padding:.35rem .5rem}}
+
+    /* Improve readability for sheet rows without changing the compact layout. */
+    .sheet-card .sheet-info h3{font-size:.98rem}
+    .sheet-card .sheet-info p{font-size:.8rem}
+    #editor-view td .cell-input,#margin-editor-view td .cell-input{font-size:.92rem}
+    @media(max-width:640px){
+      .sheet-card .sheet-info h3{font-size:.96rem}
+      .sheet-card .sheet-info p{font-size:.79rem}
+      #editor-view td .cell-input,#margin-editor-view td .cell-input{font-size:.76rem}
+    }
+    @media(max-width:360px){
+      #editor-view td .cell-input,#margin-editor-view td .cell-input{font-size:.72rem}
+    }
   </style>
 </head>
 <body>
@@ -728,7 +741,7 @@
   -->
 
   <div id="editor-view" class="hidden">
-    <div class="editor-topbar"><button class="back-button" type="button" onclick="goBackToSheets()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6M9 12h11"></path></svg><span>Back to sheets</span></button><div class="editor-tools"><button class="editor-settings-toggle" type="button" onclick="toggleEditorSettings(this)" aria-label="Editor settings" aria-expanded="false" title="Editor settings"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2"></circle><path d="M19.4 13.5a7.8 7.8 0 0 0 0-3l1.5-1.1-1.5-2.6-1.8.7a7.7 7.7 0 0 0-2.6-1.5L14.7 4h-3.1l-.3 2a7.7 7.7 0 0 0-2.6 1.5l-1.8-.7-1.5 2.6 1.5 1.1a7.8 7.8 0 0 0 0 3l-1.5 1.1 1.5 2.6 1.8-.7a7.7 7.7 0 0 0 2.6 1.5l.3 2h3.1l.3-2a7.7 7.7 0 0 0 2.6-1.5l1.8.7 1.5-2.6-1.5-1.1Z"></path></svg></button><div class="editor-settings-popover" hidden><strong>When you press Enter / Next</strong><div class="enter-mode-options"><button type="button" data-enter-mode="column" role="radio" aria-checked="false" aria-pressed="false" onclick="setEnterNavigation('column')"><span class="enter-option-copy"><strong>Next column</strong><small>Move across this product’s fields.</small></span></button><button type="button" data-enter-mode="row" role="radio" aria-checked="true" aria-pressed="true" onclick="setEnterNavigation('row')"><span class="enter-option-copy"><strong>Next row</strong><small>Move to the same field in the next product.</small></span></button></div></div></div></div>
+    <div class="editor-topbar"><button class="back-button" type="button" onclick="goBackToSheets()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6M9 12h11"></path></svg><span>Back to sheets</span></button><div class="editor-tools"><button class="editor-settings-toggle" type="button" onclick="toggleEditorSettings(this)" aria-label="Editor settings" aria-expanded="false" title="Editor settings"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2"></circle><path d="M19.4 13.5a7.8 7.8 0 0 0 0-3l1.5-1.1-1.5-2.6-1.8.7a7.7 7.7 0 0 0-2.6-1.5L14.7 4h-3.1l-.3 2a7.7 7.7 0 0 0-2.6 1.5l-1.8-.7-1.5 2.6 1.5 1.1a7.8 7.8 0 0 0 0 3l-1.5 1.1 1.5 2.6 1.8-.7a7.7 7.7 0 0 0 2.6 1.5l.3 2h3.1l.3-2a7.7 7.7 0 0 0 2.6-1.5l1.8.7 1.5-2.6-1.5-1.1Z"></path></svg></button><div class="editor-settings-popover" hidden><strong>When you press Enter / Next</strong><div class="enter-mode-options"><button type="button" data-enter-mode="column" role="radio" aria-checked="false" aria-pressed="false" onclick="setEnterNavigation('column')"><span class="enter-option-copy"><strong>Next column</strong><small>Move across this product’s fields, including price, cost, and quantity.</small></span></button><button type="button" data-enter-mode="row" role="radio" aria-checked="true" aria-pressed="true" onclick="setEnterNavigation('row')"><span class="enter-option-copy"><strong>Next row</strong><small>Move to the same field in the next product, including price, cost, and quantity.</small></span></button></div></div></div></div>
     <div class="form-row">
       <div class="form-group"><label>Sheet Name</label><input id="sheet-name" placeholder="e.g., Weekly Inventory"></div>
       <div class="form-group"><label>Date</label><input type="date" id="sheet-date"></div>
@@ -750,7 +763,7 @@
   </div>
 
   <div id="margin-editor-view" class="hidden hide-buy-price">
-    <div class="editor-topbar"><button class="back-button" type="button" onclick="goBackToSheets()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6M9 12h11"></path></svg><span>Back to sheets</span></button><div class="editor-tools"><button class="editor-settings-toggle" type="button" onclick="toggleEditorSettings(this)" aria-label="Editor settings" aria-expanded="false" title="Editor settings"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2"></circle><path d="M19.4 13.5a7.8 7.8 0 0 0 0-3l1.5-1.1-1.5-2.6-1.8.7a7.7 7.7 0 0 0-2.6-1.5L14.7 4h-3.1l-.3 2a7.7 7.7 0 0 0-2.6 1.5l-1.8-.7-1.5 2.6 1.5 1.1a7.8 7.8 0 0 0 0 3l-1.5 1.1 1.5 2.6 1.8-.7a7.7 7.7 0 0 0 2.6 1.5l.3 2h3.1l.3-2a7.7 7.7 0 0 0 2.6-1.5l1.8.7 1.5-2.6-1.5-1.1Z"></path></svg></button><div class="editor-settings-popover" hidden><strong>When you press Enter / Next</strong><div class="enter-mode-options"><button type="button" data-enter-mode="column" role="radio" aria-checked="false" aria-pressed="false" onclick="setEnterNavigation('column')"><span class="enter-option-copy"><strong>Next column</strong><small>Move across this product’s fields.</small></span></button><button type="button" data-enter-mode="row" role="radio" aria-checked="true" aria-pressed="true" onclick="setEnterNavigation('row')"><span class="enter-option-copy"><strong>Next row</strong><small>Move to the same field in the next product.</small></span></button></div></div></div></div>
+    <div class="editor-topbar"><button class="back-button" type="button" onclick="goBackToSheets()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6M9 12h11"></path></svg><span>Back to sheets</span></button><div class="editor-tools"><button class="editor-settings-toggle" type="button" onclick="toggleEditorSettings(this)" aria-label="Editor settings" aria-expanded="false" title="Editor settings"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2"></circle><path d="M19.4 13.5a7.8 7.8 0 0 0 0-3l1.5-1.1-1.5-2.6-1.8.7a7.7 7.7 0 0 0-2.6-1.5L14.7 4h-3.1l-.3 2a7.7 7.7 0 0 0-2.6 1.5l-1.8-.7-1.5 2.6 1.5 1.1a7.8 7.8 0 0 0 0 3l-1.5 1.1 1.5 2.6 1.8-.7a7.7 7.7 0 0 0 2.6 1.5l.3 2h3.1l.3-2a7.7 7.7 0 0 0 2.6-1.5l1.8.7 1.5-2.6-1.5-1.1Z"></path></svg></button><div class="editor-settings-popover" hidden><strong>When you press Enter / Next</strong><div class="enter-mode-options"><button type="button" data-enter-mode="column" role="radio" aria-checked="false" aria-pressed="false" onclick="setEnterNavigation('column')"><span class="enter-option-copy"><strong>Next column</strong><small>Move across this product’s fields, including price, cost, and quantity.</small></span></button><button type="button" data-enter-mode="row" role="radio" aria-checked="true" aria-pressed="true" onclick="setEnterNavigation('row')"><span class="enter-option-copy"><strong>Next row</strong><small>Move to the same field in the next product, including price, cost, and quantity.</small></span></button></div></div></div></div>
     <div class="form-row">
       <div class="form-group"><label>Sheet Name</label><input id="margin-sheet-name" placeholder="e.g., Weekly Sheet"></div>
       <div class="form-group"><label>Date</label><input type="date" id="margin-sheet-date"></div>
@@ -903,33 +916,28 @@ document.addEventListener('keydown',e=>{
   if(!scope||viewOnly)return;
   e.preventDefault();
 
-  const row=current.closest('#products-tbody tr, #margin-products-tbody tr');
-  const rowField=['prod-name','prod-price','prod-qty','margin-name','margin-sell','margin-buy','margin-qty']
-    .find(className=>current.classList.contains(className));
-  if(row&&rowField){
-    const visibleInputs=()=>[...row.querySelectorAll('input')].filter(input=>input.offsetParent!==null&&!input.disabled);
-    const mode=getEnterNavigationMode();
-    if(mode==='column'){
-      const fields=visibleInputs();
-      const nextField=fields[fields.indexOf(current)+1];
-      if(nextField){nextField.focus();return;}
-      let nextRow=row.nextElementSibling;
-      if(!nextRow){
-        if(row.closest('#margin-products-tbody'))addMarginProductRow();
-        else addProductRow();
-        nextRow=row.nextElementSibling;
-      }
-      nextRow?.querySelector('input:not([disabled])')?.focus();
+      const row=current.closest('#products-tbody tr, #margin-products-tbody tr');
+  if(row){
+    const tbody=row.parentElement;
+    const visibleFields=rowElement=>[...rowElement.querySelectorAll('input.cell-input')].filter(input=>
+      !input.disabled&&input.getClientRects().length>0&&getComputedStyle(input).visibility!=='hidden'
+    );
+    const fields=visibleFields(row);
+    const currentIndex=fields.indexOf(current);
+    if(currentIndex===-1)return;
+
+    if(getEnterNavigationMode()==='column'){
+      fields[(currentIndex+1)%fields.length]?.focus();
       return;
     }
-    let nextRow=row.nextElementSibling;
-    if(!nextRow){
-      if(row.closest('#margin-products-tbody'))addMarginProductRow();
+
+    const rowIndex=[...tbody.rows].indexOf(row);
+    if(rowIndex===tbody.rows.length-1){
+      if(tbody.id==='margin-products-tbody')addMarginProductRow();
       else addProductRow();
-      nextRow=row.nextElementSibling;
     }
-    const nextInput=nextRow?.querySelector(`.${rowField}`);
-    (nextInput&&nextInput.offsetParent!==null?nextInput:nextRow?.querySelector('input:not([disabled])'))?.focus();
+    const nextRow=tbody.rows[rowIndex+1];
+    if(nextRow)visibleFields(nextRow)[currentIndex]?.focus();
     return;
   }
 
@@ -1313,6 +1321,7 @@ function deleteItem(index){
 */
 function renderHome(){
   const list=document.getElementById('sheet-list');
+  if(!list)return;
   list.innerHTML=sheets.length?'':'<p style="color:var(--muted)">No sheets yet.</p>';
   sheets.forEach(sheet=>{
     const card=document.createElement('div');card.className='sheet-card';
