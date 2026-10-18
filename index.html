@@ -643,6 +643,9 @@
       border-color:var(--selected-border);background:var(--selected);color:var(--text)
     }
     body:not(.dark) .favorite-btn.active{color:#8a5c00;border-color:rgba(138,92,0,.35);background:rgba(138,92,0,.08)}
+    .readonly #share-sheet-btn,.readonly #share-margin-btn{display:inline-flex;align-items:center;justify-content:center;background:var(--card)!important;border:1px solid var(--border)!important;box-shadow:none!important;color:var(--primary)!important;padding:.4rem .55rem}
+    .readonly #share-sheet-btn .button-icon,.readonly #share-margin-btn .button-icon{width:23px;height:23px;margin:0}
+    @media(max-width:640px){.readonly #share-sheet-btn,.readonly #share-margin-btn{padding:.35rem .5rem}}
   </style>
 </head>
 <body>
@@ -740,6 +743,7 @@
       <button class="btn btn-secondary" onclick="showPage('home')">Cancel</button>
       <button id="edit-sheet-btn" class="btn btn-primary hidden" onclick="showEditor(false)">Edit</button>
       <button id="download-sheet-btn" class="btn btn-primary hidden" aria-label="Download sheet" title="Download sheet" onclick="openDownloadOptions('order')"><svg class="button-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0 5-5m-5 5-5-5M5 20h14"></path></svg><span>Download</span></button>
+      <button id="share-sheet-btn" class="btn btn-primary hidden share-sheet-btn" type="button" aria-label="Share sheet" title="Share sheet" onclick="openDownloadOptions('order','share')"><svg class="button-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><path d="m8.7 10.6 6.6-4.2m-6.6 7 6.6 4.2"></path></svg></button>
       <button class="btn btn-primary save-sheet-btn" onclick="saveCurrentSheet()">Save</button>
     </div>
 
@@ -761,6 +765,7 @@
       <button class="btn btn-secondary" onclick="cancelMarginSheet()">Cancel</button>
       <button id="edit-margin-btn" class="btn btn-primary hidden" onclick="showMarginEditor(false)">Edit</button>
       <button id="download-margin-btn" class="btn btn-primary hidden" aria-label="Download sheet" title="Download sheet" onclick="openDownloadOptions('margin')"><svg class="button-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0 5-5m-5 5-5-5M5 20h14"></path></svg><span>Download</span></button>
+      <button id="share-margin-btn" class="btn btn-primary hidden share-sheet-btn" type="button" aria-label="Share sheet" title="Share sheet" onclick="openDownloadOptions('margin','share')"><svg class="button-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><path d="m8.7 10.6 6.6-4.2m-6.6 7 6.6 4.2"></path></svg></button>
       <button class="btn btn-primary save-margin-btn" onclick="saveCurrentMarginSheet()">Save</button>
     </div>
   </div>
@@ -1094,7 +1099,7 @@ function setEditorMode(id,readOnly){
   root.querySelectorAll('.action-cell button').forEach(button=>button.classList.toggle('hidden',readOnly));
   root.querySelectorAll('.save-sheet-btn,.save-margin-btn').forEach(button=>button.classList.toggle('hidden',readOnly));
   root.querySelectorAll('#edit-sheet-btn,#edit-margin-btn').forEach(button=>button.classList.toggle('hidden',!readOnly));
-  root.querySelectorAll('#download-sheet-btn,#download-margin-btn').forEach(button=>button.classList.toggle('hidden',!readOnly));
+  root.querySelectorAll('#download-sheet-btn,#download-margin-btn,#share-sheet-btn,#share-margin-btn').forEach(button=>button.classList.toggle('hidden',!readOnly));
   root.querySelectorAll('.btn-fab-left').forEach(button=>button.classList.toggle('hidden',readOnly));
 }
 function isAutosaveEnabled(){return localStorage.getItem('autosave_enabled')!=='false'}
@@ -1427,8 +1432,9 @@ async function deleteMarginSheet(id){
   renderMargins();showToast('Sheet deleted');
 }
 
-function openDownloadOptions(type){
-  const content=`<p>Choose a frame and file type for your sheet. PDF opens your browser’s print dialog, where you can save it as a PDF.</p><div class="download-options"><div><label>Sheet appearance</label><div class="frame-options" role="group" aria-label="Sheet appearance">
+function openDownloadOptions(type,mode='download'){
+  const isShare=mode==='share';
+  const content=`<p>${isShare?'Choose how your sheet should look, then share the image. If direct sharing is unavailable, the image will be downloaded instead.':'Choose a frame and file type for your sheet. PDF opens your browser’s print dialog, where you can save it as a PDF.'}</p><div class="download-options"><div><label>Sheet appearance</label><div class="frame-options" role="group" aria-label="Sheet appearance">
     <button class="frame-option" type="button" data-frame="midnight" aria-pressed="true"><span class="frame-preview">SHEET</span>Midnight</button>
     <button class="frame-option" type="button" data-frame="paper" aria-pressed="false"><span class="frame-preview paper">SHEET</span>Paper</button>
     <button class="frame-option" type="button" data-frame="plain" aria-pressed="false"><span class="frame-preview plain">SHEET</span>Minimal</button>
@@ -1436,14 +1442,14 @@ function openDownloadOptions(type){
     <button class="ratio-option" type="button" data-ratio="4:5" aria-pressed="true"><span class="ratio-preview portrait">4:5</span>Portrait</button>
     <button class="ratio-option" type="button" data-ratio="1:1" aria-pressed="false"><span class="ratio-preview square">1:1</span>Square</button>
     <button class="ratio-option" type="button" data-ratio="16:9" aria-pressed="false"><span class="ratio-preview landscape">16:9</span>Landscape</button>
-  </div></div><div class="download-format"><label>File format</label><div class="format-options" role="group" aria-label="File format"><button class="format-option" type="button" data-format="jpg" aria-pressed="true">JPG</button><button class="format-option" type="button" data-format="png" aria-pressed="false">PNG</button><button class="format-option" type="button" data-format="pdf" aria-pressed="false">PDF</button></div></div></div>`;
-  openAppModal('Download sheet',content,[
+  </div></div><div class="download-format"><label>File format</label><div class="format-options" role="group" aria-label="File format"><button class="format-option" type="button" data-format="jpg" aria-pressed="true">JPG</button><button class="format-option" type="button" data-format="png" aria-pressed="false">PNG</button>${isShare?'':'<button class="format-option" type="button" data-format="pdf" aria-pressed="false">PDF</button>'}</div></div></div>`;
+  openAppModal(isShare?'Share sheet':'Download sheet',content,[
     {label:'Cancel',onClick:closeAppModal},
-    {label:'Download',className:'btn btn-primary',onClick:()=>{
+    {label:isShare?'Share':'Download',className:'btn btn-primary',onClick:()=>{
       const frame=document.querySelector('.frame-option[aria-pressed="true"]')?.dataset.frame||'midnight';
       const ratio=document.querySelector('.ratio-option[aria-pressed="true"]')?.dataset.ratio||'4:5';
       const format=document.querySelector('.format-option[aria-pressed="true"]')?.dataset.format||'jpg';
-      closeAppModal();downloadSheetImage(type,{frame,format,ratio});
+      closeAppModal();downloadSheetImage(type,{frame,format,ratio,share:isShare});
     }}
   ]);
   document.querySelectorAll('.frame-option').forEach(button=>button.addEventListener('click',()=>{
@@ -1456,7 +1462,7 @@ function openDownloadOptions(type){
     document.querySelectorAll('.format-option').forEach(option=>option.setAttribute('aria-pressed',String(option===button)));
   }));
 }
-function downloadSheetImage(type,{frame='midnight',format='jpg',ratio='4:5'}={}){
+function downloadSheetImage(type,{frame='midnight',format='jpg',ratio='4:5',share=false}={}){
   const isMargin=type==='margin';
   const name=document.getElementById(isMargin?'margin-sheet-name':'sheet-name').value.trim()||'sheet';
   const date=document.getElementById(isMargin?'margin-sheet-date':'sheet-date').value||'N/A';
@@ -1527,13 +1533,38 @@ function downloadSheetImage(type,{frame='midnight',format='jpg',ratio='4:5'}={})
   const mime=format==='png'?'image/png':'image/jpeg';
   const dataUrl=canvas.toDataURL(mime,.92);
   const baseName=name.replace(/[^a-z0-9]+/gi,'-').toLowerCase()||'sheet';
+  const downloadImage=()=>{
+    const link=document.createElement('a');link.download=`${baseName}.${format}`;link.href=dataUrl;link.click();
+  };
+  if(share){
+    if(typeof File==='undefined'){
+      downloadImage();showToast('Image downloaded instead');return;
+    }
+    try{
+      const binary=atob(dataUrl.split(',')[1]);
+      const bytes=new Uint8Array(binary.length);
+      for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);
+      const file=new File([bytes],`${baseName}.${format}`,{type:mime});
+      if(navigator.share&&navigator.canShare?.({files:[file]})){
+        navigator.share({files:[file],title:name}).catch(error=>{
+          if(error.name==='AbortError')return;
+          downloadImage();showToast('Sharing unavailable; image downloaded instead');
+        });
+      }else{
+        downloadImage();showToast('Direct sharing unavailable; image downloaded instead');
+      }
+    }catch(error){
+      downloadImage();showToast('Sharing unavailable; image downloaded instead');
+    }
+    return;
+  }
   if(format==='pdf'){
     const printWindow=window.open('','_blank');
     if(!printWindow){showToast('Allow the print window to create a PDF');return;}
     printWindow.document.write(`<!doctype html><html><head><title>${escapeHtml(name)}</title><style>@page{margin:12mm}*{box-sizing:border-box}body{margin:0}img{display:block;width:100%;height:auto}</style></head><body><img src="${dataUrl}" alt="${escapeHtml(name)}" onload="window.print()"></body></html>`);
     printWindow.document.close();return;
   }
-  const link=document.createElement('a');link.download=`${baseName}.${format}`;link.href=dataUrl;link.click();
+  downloadImage();
 }
 
 function saveCurrentSheet(){
